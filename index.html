@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حملة تبرعات لشنط رمضان</title>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyA9zVr5sK-eU_HnCMkKOU4sJyOyRBn8agg",
+            authDomain: "shonat-ea094.firebaseapp.com",
+            databaseURL: "https://shonat-ea094-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "shonat-ea094",
+            storageBucket: "shonat-ea094.appspot.com",
+            messagingSenderId: "237403564132",
+            appId: "1:237403564132:web:811426b4eaef9117c31771",
+            measurementId: "G-9J1QER3K4P"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+        const amountRef = ref(database, 'donation/amount');
+
+        onValue(amountRef, (snapshot) => {
+            const amount = snapshot.val() || 0;
+            document.getElementById("amount").innerText = amount;
+            const progressPercentage = (amount / 10000) * 100;
+            document.getElementById("progress-bar").style.width = progressPercentage + "%";
+            document.getElementById("progress-text").innerText = Math.round(progressPercentage) + "%";
+        });
+
+        window.updateAmount = function() {
+            const newAmount = document.getElementById("manualAmount").value;
+            set(amountRef, newAmount);
+        };
+    </script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: url('background.jpg') center/cover no-repeat;
+            color: white;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 500px;
+            margin: 20px auto;
+            padding: 30px;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+        h1, h2 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        .progress-bar {
+            width: 100%;
+            background: #ddd;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        .progress {
+            height: 30px;
+            background: #28a745;
+            color: white;
+            line-height: 30px;
+            text-align: center;
+            width: 0%;
+        }
+        .copy-btn {
+            cursor: pointer;
+            background: #ffcc00;
+            border: none;
+            padding: 5px 10px;
+            margin: 5px;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+        .hidden {
+            display: none;
+        }
+        .btn-reveal {
+            display: none; /* إخفاء الزر عند تحميل الصفحة */
+            background: #007bff;
+            padding: 10px;
+            margin: 15px 0;
+            color: white;
+            font-size: 1.2em;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-reveal:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 id="title">حملة التبرعات لشنط رمضان</h1>
+        <p>رقم اتصالات كاش: <strong id="vodafone">01158159732</strong> <button class="copy-btn" onclick="copyText('vodafone')">📋 نسخ</button></p>
+        <p>رقم إنستا باي: <strong id="instapay">01122372630</strong> <button class="copy-btn" onclick="copyText('instapay')">📋 نسخ</button></p>
+        <h2>المبلغ المُجمع: <span id="amount">0</span> جنيه</h2>
+        <div class="progress-bar">
+            <div class="progress" id="progress-bar">
+                <span id="progress-text">0%</span>
+            </div>
+        </div>
+        <div id="adminPanel" class="hidden">
+            <input type="number" id="manualAmount" placeholder="أدخل المبلغ الجديد">
+            <button onclick="updateAmount()">تحديث</button>
+        </div>
+        <button class="btn-reveal" id="revealButton" onclick="revealAdminPanel()">فتح لوحة التحكم</button>
+    </div>
+
+    <script>
+        function copyText(elementId) {
+            let text = document.getElementById(elementId).innerText;
+            navigator.clipboard.writeText(text);
+            alert('تم النسخ: ' + text);
+        }
+
+        let clickCount = 0;
+        let revealButton = document.getElementById("revealButton");
+
+        document.body.addEventListener("click", function() {
+            clickCount++;
+            if (clickCount >= 15) {
+                revealButton.style.display = "block"; // إظهار الزر بعد 15 نقرة
+            }
+        });
+
+        function revealAdminPanel() {
+            document.getElementById("adminPanel").classList.remove("hidden"); // إظهار لوحة التحكم
+            revealButton.style.display = "none"; // إخفاء الزر بعد الفتح
+        }
+    </script>
+</body>
+</html>
